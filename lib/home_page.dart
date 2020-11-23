@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Home Page"),
+            Image.asset('assets/car_png.png', height: 40,),
             RawMaterialButton(
               fillColor: Colors.blue,
               child: Text('polygon map page'),
