@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hawk_eye/example/animate_markers_through_polygon.dart';
+import 'package:hawk_eye/example/listen_locations_updates.dart';
 
 ///
 ///Created By Aurosmruti (aurosmruti@smarttersstudio.com) on 11/23/2020 1:00 PM
@@ -14,7 +17,24 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("Home Page"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Home Page"),
+            RawMaterialButton(
+              fillColor: Colors.blue,
+              child: Text('polygon map page'),
+                onPressed: (){
+              Get.to(FlutterMapMarkerAnimationExample());
+            }),
+            RawMaterialButton(
+              child: Text("real time"),
+                fillColor: Colors.grey,
+                onPressed:(){
+              Get.to(FlutterMapMarkerAnimationRealTimeExample());
+            })
+          ],
+        ),
       ),
     );
   }
