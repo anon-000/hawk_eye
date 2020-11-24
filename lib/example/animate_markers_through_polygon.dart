@@ -23,6 +23,7 @@ final polygon = <LatLng>[
   LatLng(18.495351, -69.949366),
   LatLng(18.497477, -69.947596),
   LatLng(18.498932, -69.948615),
+  LatLng(18.498473, -69.950779),
   LatLng(18.498373, -69.958779),
   LatLng(18.488600, -69.959574),
 ];
@@ -35,6 +36,8 @@ class FlutterMapMarkerAnimationExample extends StatefulWidget {
 
 class _FlutterMapMarkerAnimationExampleState
     extends State<FlutterMapMarkerAnimationExample> {
+  double rad = 50.0;
+  bool radiusForward = true;
   //Markers collection, proper way
   final Map<MarkerId, Marker> _markers = Map<MarkerId, Marker>();
 
@@ -64,7 +67,7 @@ class _FlutterMapMarkerAnimationExampleState
     return completer.future;
   }
 
-  setMarkers(LatLng latLng, double rotation) async {
+  setMarkers(LatLng latLng, double rotation, double radius) async {
     final Size size = Size(100, 100);
     ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     Canvas canvas = Canvas(pictureRecorder);
@@ -72,7 +75,7 @@ class _FlutterMapMarkerAnimationExampleState
 //      final double borderWidth = 3.0;
 
 //      final double imageOffset = shadowWidth + borderWidth;
-    Paint paint = Paint()..color = Colors.yellow.withOpacity(0.5);
+    Paint paint = Paint()..color = radiusForward ? Colors.yellow.withOpacity(0.5) :Colors.orange.withOpacity(0.5);
 
     /// Marker
 //    final path = Path()
@@ -82,29 +85,32 @@ class _FlutterMapMarkerAnimationExampleState
 //          size.width / 2, size.height);
     final path = Path();
 
+    /// yellow circle
     canvas.drawOval(
-      Rect.fromLTWH(0, 0, size.width + 200, size.height+ 200),
+      Rect.fromLTWH(0, 0, size.width + radius, size.height+ radius),
       paint,
     );
+    canvas.drawShadow(path, Colors.grey, 4, true);
 
-    paint = Paint()..color = Colors.red;
+    /// marker red
+    paint = Paint()..color = radiusForward? Colors.orange : Colors.yellow;
     path
-      ..moveTo(size.width / 2 + 100, size.height + 100)
-      ..lineTo(size.width / 4 + 10 + 100, size.height+ 100)
-      ..lineTo(size.width/4+ 100, size.height - 10+ 100)
-      ..lineTo(size.width/4+ 100, size.height/2+20+ 100)
-      ..lineTo(100.0, size.height/2+20+ 100)
-      ..lineTo(size.width/4+ 100, size.height/2-20+ 100)
-      ..lineTo(size.width/4+ 100, 10+ 100.0)
-      ..lineTo(size.width/4+10+ 100, 0 + 100.0)
-      ..lineTo(3*(size.width)/4 - 10 + 100.0, 0 + 100.0)
-      ..lineTo(3*(size.width)/4 + 100.0, 10 + 100.0)
-      ..lineTo(3*(size.width)/4 + 100.0, size.height/2-20 + 100.0)
-      ..lineTo(size.width + 100.0, size.height/2+20 + 100.0)
-      ..lineTo(3*(size.width)/4 + 100.0, size.height/2+20 + 100.0)
-      ..lineTo(3*(size.width)/4 + 100.0, size.height - 10 + 100.0)
-      ..lineTo(3*(size.width)/4 - 10 + 100.0, size.height + 100.0)
-      ..lineTo(size.width / 2 + 100.0, size.height + 100.0);
+      ..moveTo(size.width / 2 + radius/2, size.height + radius/2)
+      ..lineTo(size.width / 4 + 10 + radius/2, size.height+ radius/2)
+      ..lineTo(size.width/4+ radius/2, size.height - 10+ radius/2)
+      ..lineTo(size.width/4+ radius/2, size.height/2+20+ radius/2)
+      ..lineTo(radius/2, size.height/2+20+ radius/2)
+      ..lineTo(size.width/4+ radius/2, size.height/2-20+ radius/2)
+      ..lineTo(size.width/4+ radius/2, 10+ radius/2)
+      ..lineTo(size.width/4+10+ radius/2, radius/2)
+      ..lineTo(3*(size.width)/4 - 10 + radius/2, 0 + radius/2)
+      ..lineTo(3*(size.width)/4 + radius/2, 10 + radius/2)
+      ..lineTo(3*(size.width)/4 + radius/2, size.height/2-20 + radius/2)
+      ..lineTo(size.width + radius/2, size.height/2+20 + radius/2)
+      ..lineTo(3*(size.width)/4 + radius/2, size.height/2+20 + radius/2)
+      ..lineTo(3*(size.width)/4 + radius/2, size.height - 10 + radius/2)
+      ..lineTo(3*(size.width)/4 - 10 + radius/2, size.height + radius/2)
+      ..lineTo(size.width / 2 + radius/2, size.height + radius/2);
 
     canvas.drawShadow(path, Colors.grey, 4, true);
     canvas.drawPath(path, paint);
@@ -112,7 +118,7 @@ class _FlutterMapMarkerAnimationExampleState
     /// Convert canvas to image
     ui.Image markerAsImage = await pictureRecorder
         .endRecording()
-        .toImage(size.width.toInt() + 200, size.height.toInt() + 200);
+        .toImage(size.width.toInt() + radius.toInt(), size.height.toInt() + radius.toInt());
 
     /// Convert image to bytes
     ByteData byteData =
@@ -172,18 +178,23 @@ class _FlutterMapMarkerAnimationExampleState
       double angle = delta.rotation;
       print("Angle: -> $angle");
       //Update the animated marker
-      setMarkers(delta.from, delta.rotation);
-//      setState(() {
-//        Marker sourceMarker = Marker(
-//          markerId: sourceId,
-//          rotation: delta.rotation,
-//          position: LatLng(
-//            delta.from.latitude,
-//            delta.from.longitude,
-//          ),
-//        );
-//        _markers[sourceId] = sourceMarker;
-//      });
+
+      if(rad > 250.0){
+        radiusForward = false;
+        rad -= 3;
+      }else if(rad < 50.0){
+        radiusForward = true;
+        rad = 50.0;
+      }else{
+        if(radiusForward){
+          rad += 3;
+        }else{
+          rad -= 3;
+        }
+      }
+      print('radius : $rad');
+
+      setMarkers(delta.from, delta.rotation, rad);
 
       if (polygon.isNotEmpty) {
         //Pop the last position
@@ -207,7 +218,7 @@ class _FlutterMapMarkerAnimationExampleState
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
 
-                setMarkers(startPosition, 0);
+                setMarkers(startPosition, 0 , rad);
 
                 _latLngStream.addLatLng(startPosition);
                 //Add second position to start position over
