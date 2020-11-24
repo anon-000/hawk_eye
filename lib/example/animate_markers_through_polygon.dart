@@ -12,12 +12,12 @@ import 'package:hawk_eye/data_model/lat_lng_delta.dart';
 import 'package:hawk_eye/marker_animation_utils/lat_lng_interpolation.dart';
 import 'dart:ui' as ui;
 
-import 'package:hawk_eye/marker_animation_utils/utils/math_util.dart';
 
 final startPosition = LatLng(18.488213, -69.959186);
+final newStartPosition = LatLng(20.286523, 85.834676);
 
 //Run over the polygon position
-final polygon = <LatLng>[
+final polygonz = <LatLng>[
   startPosition,
   LatLng(18.489338, -69.947091),
   LatLng(18.495351, -69.949366),
@@ -26,6 +26,20 @@ final polygon = <LatLng>[
   LatLng(18.498473, -69.950779),
   LatLng(18.498373, -69.958779),
   LatLng(18.488600, -69.959574),
+];
+
+
+
+final newRoute = <LatLng>[
+  newStartPosition,
+  LatLng(20.286523, 85.834676), //nicco park square
+  LatLng(20.287503, 85.843098), // bayababa math
+  LatLng(20.289506, 85.842723), // rupali square
+  LatLng(20.288480, 85.834430), // dm school square
+  LatLng(20.292022, 85.833882), // chai biscuit
+  LatLng(20.293058, 85.842337), // rd college cha dokan
+  LatLng(20.296097, 85.842101), // vani bihar square
+  LatLng(20.296832, 85.833282), // acharya bihar square
 ];
 
 class FlutterMapMarkerAnimationExample extends StatefulWidget {
@@ -51,13 +65,13 @@ class _FlutterMapMarkerAnimationExampleState
 
   final Completer<GoogleMapController> _controller = Completer();
 
-  final CameraPosition _kSantoDomingo = CameraPosition(
-    target: startPosition,
+   CameraPosition _cameraPosition = CameraPosition(
+    target: newStartPosition,
     zoom: 15,
   );
 
   Future<ui.Image> getImageFromPath() async {
-    final imageFile = NetworkImage('');
+    final imageFile = NetworkImage('https://i.imgur.com/zYmVgq8.png',);
     final Completer<ui.Image> completer = Completer();
     imageFile
         .resolve(ImageConfiguration())
@@ -93,27 +107,32 @@ class _FlutterMapMarkerAnimationExampleState
     canvas.drawShadow(path, Colors.grey, 4, true);
 
     /// marker red
-    paint = Paint()..color = radiusForward? Colors.orange : Colors.yellow;
-    path
-      ..moveTo(size.width / 2 + radius/2, size.height + radius/2)
-      ..lineTo(size.width / 4 + 10 + radius/2, size.height+ radius/2)
-      ..lineTo(size.width/4+ radius/2, size.height - 10+ radius/2)
-      ..lineTo(size.width/4+ radius/2, size.height/2+20+ radius/2)
-      ..lineTo(radius/2, size.height/2+20+ radius/2)
-      ..lineTo(size.width/4+ radius/2, size.height/2-20+ radius/2)
-      ..lineTo(size.width/4+ radius/2, 10+ radius/2)
-      ..lineTo(size.width/4+10+ radius/2, radius/2)
-      ..lineTo(3*(size.width)/4 - 10 + radius/2, 0 + radius/2)
-      ..lineTo(3*(size.width)/4 + radius/2, 10 + radius/2)
-      ..lineTo(3*(size.width)/4 + radius/2, size.height/2-20 + radius/2)
-      ..lineTo(size.width + radius/2, size.height/2+20 + radius/2)
-      ..lineTo(3*(size.width)/4 + radius/2, size.height/2+20 + radius/2)
-      ..lineTo(3*(size.width)/4 + radius/2, size.height - 10 + radius/2)
-      ..lineTo(3*(size.width)/4 - 10 + radius/2, size.height + radius/2)
-      ..lineTo(size.width / 2 + radius/2, size.height + radius/2);
+//    paint = Paint()..color = radiusForward? Colors.orange : Colors.yellow;
+//    path
+//      ..moveTo(size.width / 2 + radius/2, size.height + radius/2)
+//      ..lineTo(size.width / 4 + 10 + radius/2, size.height+ radius/2)
+//      ..lineTo(size.width/4+ radius/2, size.height - 10+ radius/2)
+//      ..lineTo(size.width/4+ radius/2, size.height/2+20+ radius/2)
+//      ..lineTo(radius/2, size.height/2+20+ radius/2)
+//      ..lineTo(size.width/4+ radius/2, size.height/2-20+ radius/2)
+//      ..lineTo(size.width/4+ radius/2, 10+ radius/2)
+//      ..lineTo(size.width/4+10+ radius/2, radius/2)
+//      ..lineTo(3*(size.width)/4 - 10 + radius/2, 0 + radius/2)
+//      ..lineTo(3*(size.width)/4 + radius/2, 10 + radius/2)
+//      ..lineTo(3*(size.width)/4 + radius/2, size.height/2-20 + radius/2)
+//      ..lineTo(size.width + radius/2, size.height/2+20 + radius/2)
+//      ..lineTo(3*(size.width)/4 + radius/2, size.height/2+20 + radius/2)
+//      ..lineTo(3*(size.width)/4 + radius/2, size.height - 10 + radius/2)
+//      ..lineTo(3*(size.width)/4 - 10 + radius/2, size.height + radius/2)
+//      ..lineTo(size.width / 2 + radius/2, size.height + radius/2);
+//
+//    canvas.drawShadow(path, Colors.grey, 4, true);
+//    canvas.drawPath(path, paint);
 
-    canvas.drawShadow(path, Colors.grey, 4, true);
-    canvas.drawPath(path, paint);
+    /// to draw image marker from network image
+    Rect rect = Rect.fromLTWH(radius/2, radius/2, size.width, size.height);
+    ui.Image image = await getImageFromPath();
+    paintImage(canvas: canvas, image: image, rect: rect, fit: BoxFit.contain,);
 
     /// Convert canvas to image
     ui.Image markerAsImage = await pictureRecorder
@@ -134,6 +153,10 @@ class _FlutterMapMarkerAnimationExampleState
           rotation: rotation,
           anchor: Offset(0.5, 0.5),
           infoWindow: InfoWindow(title: 'car'));
+      _cameraPosition = CameraPosition(
+        target: latLng,
+        zoom: 15
+      );
     });
 //    pictureRecorder = ui.PictureRecorder();
 //    canvas = Canvas(pictureRecorder);
@@ -193,12 +216,11 @@ class _FlutterMapMarkerAnimationExampleState
         }
       }
       print('radius : $rad');
-
       setMarkers(delta.from, delta.rotation, rad);
 
-      if (polygon.isNotEmpty) {
+      if (newRoute.isNotEmpty) {
         //Pop the last position
-        _latLngStream.addLatLng(polygon.removeLast());
+        _latLngStream.addLatLng(newRoute.removeLast());
       }
     });
 
@@ -214,16 +236,17 @@ class _FlutterMapMarkerAnimationExampleState
             GoogleMap(
               mapType: MapType.normal,
               markers: Set<Marker>.of(_markers.values),
-              initialCameraPosition: _kSantoDomingo,
+              initialCameraPosition: _cameraPosition,
+
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
 
-                setMarkers(startPosition, 0 , rad);
+                setMarkers(newStartPosition, 0 , rad);
 
-                _latLngStream.addLatLng(startPosition);
+                _latLngStream.addLatLng(newStartPosition);
                 //Add second position to start position over
                 Future.delayed(const Duration(milliseconds: 3000), () {
-                  _latLngStream.addLatLng(polygon.removeLast());
+                  _latLngStream.addLatLng(newRoute.removeLast());
                 });
               },
             ),
@@ -239,18 +262,20 @@ class _FlutterMapMarkerAnimationExampleState
                       child: Text("Reset"),
                       onPressed: () {
                         setState(() {
-                          polygon.addAll(<LatLng>[
-                            startPosition,
-                            LatLng(18.489338, -69.947091),
-                            LatLng(18.495351, -69.949366),
-                            LatLng(18.497477, -69.947596),
-                            LatLng(18.498932, -69.948615),
-                            LatLng(18.498373, -69.958779),
-                            LatLng(18.488600, -69.959574),
+                          newRoute.addAll(<LatLng>[
+                            newStartPosition,
+                            LatLng(20.286523, 85.834676), //nicco park square
+                            LatLng(20.287503, 85.843098), // bayababa math
+                            LatLng(20.289506, 85.842723), // rupali square
+                            LatLng(20.288480, 85.834430), // dm school square
+                            LatLng(20.292022, 85.833882), // chai biscuit
+                            LatLng(20.293058, 85.842337), // rd college cha dokan
+                            LatLng(20.296097, 85.842101), // vani bihar square
+                            LatLng(20.296832, 85.833282), // acharya bihar square
                           ]);
                         });
-                        print(polygon.toString());
-                        _latLngStream.addLatLng(polygon.removeLast());
+                        print(newRoute.toString());
+                        _latLngStream.addLatLng(newRoute.removeLast());
                       },
                     ),
                   ),
