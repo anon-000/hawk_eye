@@ -61,6 +61,7 @@ class LatLngInterpolationStream {
           MathUtil.toRadians(deltaPosition.rotation));
       double angleDelta = MathUtil.toDegrees(angle);
 
+
       //No taking angle movement below 25.0 degrees
       if (lastBearing.isNaN || angleDelta.abs() < 25.0) {
         //Saving the position for calculate angle delta
