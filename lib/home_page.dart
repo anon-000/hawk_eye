@@ -21,16 +21,16 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Home Page"),
-            Image.asset('assets/car_png.png', height: 40,),
+            Image.asset('assets/car_png.png', height: 45,),
             RawMaterialButton(
-              fillColor: Colors.blue,
+              fillColor: Colors.yellow,
               child: Text('polygon map page'),
                 onPressed: (){
               Get.to(FlutterMapMarkerAnimationExample());
             }),
             RawMaterialButton(
               child: Text("real time"),
-                fillColor: Colors.grey,
+                fillColor: Colors.red,
                 onPressed:(){
               Get.to(FlutterMapMarkerAnimationRealTimeExample());
             })
