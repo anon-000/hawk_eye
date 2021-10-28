@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hawk_eye/data_model/lat_lng_delta.dart';
@@ -78,6 +79,10 @@ class _FlutterMapMarkerAnimationExampleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+        title: Text("Google Map"),
+      ),
       body: SafeArea(
         child: GoogleMap(
           mapType: MapType.normal,
